@@ -46,12 +46,12 @@ function connect (state, emit) {
 }
 
 function list (state, emit) {
-  if (state.posts.loading) return html`<div class="button is-loading"></div>`
+  if (state.topics.loading) return html`<div class="button is-loading"></div>`
 
   return html`
     <pre>
       <ul>
-        ${state.posts.list.slice(-5).map(p => html`<li>@${p.author}: ${p.body}</li>`)}
+        ${state.topics.list.map(topic => html`<li>@${topic.author}: ${topic.title}</li>`)}
       </ul>
     </pre>`
 }
@@ -63,7 +63,7 @@ function form (state, emit) {
     <form onsubmit=${onSubmit}>
       <input name="comment" class="input" type="text">
 
-      <button type="submit" class="button ${state.posts.posting ? 'is-loading' : ''}">
+      <button type="submit" class="button ${state.topics.posting ? 'is-loading' : ''}">
         Send
       </button>
     </form>`

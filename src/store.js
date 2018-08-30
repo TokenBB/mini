@@ -5,11 +5,12 @@ const KEYS = {
 
 var steem = require('@steemit/steem-js')
 var sc2 = require('sc2-sdk')
+var request = require('request')
 
 var storage = window.sessionStorage
 var connect = createConnectAPI()
 
-steem.api.setOptions({ url: 'wss://testnet.steem.vc' })
+steem.api.setOptions({ url: 'wss://' + process.env.STEEMD_URL })
 steem.config.set('address_prefix', process.env.ADDRESS_PREFIX)
 steem.config.set('chain_id', process.env.CHAIN_ID)
 
@@ -20,7 +21,7 @@ function store (state, emitter, app) {
     loginURL: connect.getLoginURL()
   }
 
-  state.posts = {
+  state.topics = {
     loading: true,
     posting: false,
     list: []
@@ -29,7 +30,6 @@ function store (state, emitter, app) {
   resetAuthState()
 
   emitter.on('DOMContentLoaded', () => {
-    emitter.on('add-comment', addComment)
     emitter.on('logout', logout)
 
     onInit()
@@ -38,37 +38,9 @@ function store (state, emitter, app) {
   function onInit () {
     if (state.query.access_token) storeSession()
 
-    loadPosts()
+    loadTopics()
     loadSession()
 
-    emitter.emit('render')
-  }
-
-  function addComment (text) {
-    startPosting()
-
-    var comment = {
-      parent: '@tokenbb-user/mini',
-      title: 'comment posted from mini',
-      body: text
-    }
-
-    postComment(comment, (err, results) => {
-      stopPosting()
-
-      if (err) return console.error(err)
-
-      loadPosts()
-    })
-  }
-
-  function startPosting () {
-    state.posts.posting = true
-    emitter.emit('render')
-  }
-
-  function stopPosting () {
-    state.posts.posting = false
     emitter.emit('render')
   }
 
@@ -86,12 +58,18 @@ function store (state, emitter, app) {
     emitter.emit('render')
   }
 
-  function loadPosts () {
-    steem.api.getContentReplies('tokenbb-user', 'mini', function (err, result) {
+  function loadTopics () {
+    var opts = {
+      method: 'GET',
+      url: process.env.API_URL + '/topics',
+      json: true
+    }
+
+    request(opts, (err, res) => {
       if (err) return console.error(err)
 
-      state.posts.list = result
-      state.posts.loading = false
+      state.topics.list = res.body
+      state.topics.loading = false
 
       emitter.emit('render')
     })

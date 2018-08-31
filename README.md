@@ -46,15 +46,19 @@ metadata:
 {
   "json_metadata": {
     "app": "tokenbb/0.1",
-    "info": {
-      "title": "",
-      "author": "",
-      "category": "",
+    "format": "markdown",
+    "tags": [
+      "tokenbb"
+    ],
+    "images": [],
+    "videos": [],
+    "tokenbb": {
+      "parent": null,
+      "author": "kareniel",
+      "title": "TokenBB JSON metadata schema",
+      "category": "Meta",
       "tags": []
     }
-  },
-  "tags": [
-    "tokenbb"
-  ]
+  }
 }
 ```
